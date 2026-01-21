@@ -35,10 +35,27 @@ class SensorService {
 
     public async updateSensor(id: string, body: Sensor) {
 
+        // Recupera
+        const sensorExiste = await this.sensorRepository.findOneBy({ id })  
+        
+        if(!sensorExiste) {
+            throw new AppError(400, "Sensor não foi encontrado!");
+        }
+
+        const update = await this.sensorRepository.create(body);
+        const sensorUpdate = await this.sensorRepository.merge(sensorExiste, update);
 
     }
 
     public async deleteSensor(id: string) {
+
+        const sensor = await this.sensorRepository.findOneBy({ id});
+
+        if (!sensor) {
+            throw new AppError(400, "Sensor não encontrado");
+        }
+
+        await this.sensorRepository.remove(sensor);
 
 
     }
