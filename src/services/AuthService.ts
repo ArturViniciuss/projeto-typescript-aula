@@ -13,7 +13,8 @@ export default class AuthService {
     private repoRefresh = appDataSource.getRepository(RefreshToken);
     private repoPesquisador = appDataSource.getRepository(Pesquisador);
 
-    async login(email: string, senha: string) {
+    async login(email: string, senha: string,   userAgent: string,
+  ip: string) {
 
         const pesquisador = await this.repoPesquisador.findOne({
             where: { email}
@@ -30,22 +31,37 @@ export default class AuthService {
             throw new AppError(401, "Credênciais Inválidas")
         }
 
-        const refreshToken = await this.createRefreshToken(pesquisador);
+          let refreshToken = await this.repoRefresh.findOne({
+            where: {
+            pesquisador: { id: pesquisador.id },
+            userAgent,
+            ipAddress: ip,
+            revoked: false
+            }
+        });
+
+        if(!refreshToken) {
+            refreshToken = await this.createRefreshToken(pesquisador, userAgent, ip);
+        }
 
         // Acess Token
         const tokenAccess = this.generateAcessToken(pesquisador);
 
         // Refresh Token
-        const tokenRefresh = this.generateRefreshToken(pesquisador, refreshToken.jti);
+        const tokenRefresh = await this.generateRefreshToken(pesquisador, refreshToken.jti);
 
         // Retorna os tokens
         return { tokenAccess, tokenRefresh }
 
     }
 
-    private async createRefreshToken(pesquisador: Pesquisador) {
+    private async createRefreshToken(pesquisador: Pesquisador, userAgent: string, ip: string) {
+        const sessionId = randomUUID();
         const token  = await this.repoRefresh.create({
             jti: randomUUID(),
+            userAgent: userAgent,
+            sessionId: sessionId,
+            ipAddress: ip,
             pesquisador: pesquisador
         })
 

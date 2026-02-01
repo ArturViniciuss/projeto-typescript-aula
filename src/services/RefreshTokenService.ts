@@ -12,46 +12,50 @@ export default class RefreshTokenService {
 
     private repoRefresh = appDataSource.getRepository(RefreshToken);
 
-    async refresh(refreshToken: string) {
+async refresh(refreshToken: string, userAgent: string, ip: string) {
 
-        const decoded =  jwt.verify(refreshToken, jwtConfig.refresh.secret) as any;
+  const decoded = jwt.verify(
+    refreshToken,
+    jwtConfig.refresh.secret
+  ) as any;
 
-        const jti = decoded.jti;
+  const tokenDb = await this.repoRefresh.findOne({
+    where: {
+      jti: decoded.jti,
+      revoked: false,
+      userAgent,
+      ipAddress: ip
+    },
+    relations: ['pesquisador']
+  });
 
-        const tokenSalvoNoBanco = await this.repoRefresh.findOne({ 
-            where: { jti, revoked: false }, relations: ['pesquisadores']
-        })
+  if (!tokenDb || tokenDb.expireIn < new Date()) {
+    throw new AppError(401, "Token inválido");
+  }
 
-        if(!tokenSalvoNoBanco || tokenSalvoNoBanco.expireIn < new Date()) {
-            throw new AppError(401, "Token Inválido!")
-        }
+  const valid = await bcrypt.compare(refreshToken, tokenDb.tokenhash);
+  if (!valid) {
+    throw new AppError(401, "Token inválido");
+  }
 
-        const tokenInvalido = await bcrypt.compare(refreshToken, tokenSalvoNoBanco.tokenhash);
+  await this.repoRefresh.update({ id: tokenDb.id }, { revoked: true });
 
-        if(!tokenInvalido) {
-            throw new AppError(401, "Token Inválido!")
-        }
+  const novo = await this.repoRefresh.save({
+    jti: randomUUID(),
+    sessionId: tokenDb.sessionId,
+    userAgent,
+    ipAddress: ip,
+    pesquisador: tokenDb.pesquisador
+  });
 
-        // Torna o token inválido!
-        await this.repoRefresh.update({ jti }, { revoked: true });
-
-        const novoToken = await this.createRefreshToken(tokenSalvoNoBanco.pesquisador)
-
-        return {
-            tokenAccess: this.generateAcessToken(tokenSalvoNoBanco.pesquisador),
-            refreshToken: this.generateRefreshToken(tokenSalvoNoBanco.pesquisador, novoToken.jti)
-        }
-
-    }
-
-    private async createRefreshToken(pesquisador: Pesquisador) {
-            const token  = await this.repoRefresh.create({
-                jti: randomUUID(),
-                pesquisador: pesquisador
-            })
-    
-            return this.repoRefresh.save(token);
-        }
+  return {
+    accessToken: this.generateAcessToken(tokenDb.pesquisador),
+    refreshToken: await this.generateRefreshToken(
+      tokenDb.pesquisador,
+      novo.jti
+    )
+  };
+}
     
     private async generateRefreshToken(pesq: Pesquisador, jti: string) {
     

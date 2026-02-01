@@ -1,9 +1,9 @@
+import "reflect-metadata"
 import express from "express";
 import cors from "cors";
 import morgan from "morgan";
 import dotenv from "dotenv";
 
-import sensorRouter from "./routes/sensorRoutes.js";
 import { appDataSource } from "./database/appDataSource.js";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";

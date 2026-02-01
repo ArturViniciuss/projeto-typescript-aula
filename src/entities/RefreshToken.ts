@@ -10,13 +10,22 @@ export default class RefreshToken {
     @Column({ type: "varchar" , nullable: false, length: 255})
     jti: string;
 
-    @Column({ type: "varchar", nullable: false, length: 255 })
+    @Column({ type: "varchar", nullable: true })
+    sessionId: string;
+
+    @Column({ type: "varchar", nullable: true })
+    userAgent: string;
+
+    @Column({ type: "varchar", nullable: true })
+    ipAddress: string;
+
+    @Column({ type: "varchar", nullable: true, length: 255 })
     tokenhash: string;
 
     @Column({  type: 'timestamp', nullable: true })
     expireIn: Date;
 
-    @Column({ default: false })
+    @Column({ type: "boolean",  default: true })
     revoked:  boolean;
 
     @ManyToOne(() => Pesquisador, { onDelete: 'CASCADE' })

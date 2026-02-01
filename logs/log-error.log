@@ -1,1 +1,22 @@
 {"level":"error","message":"Sensor já cadastrado! - /api/sensors - ::1 "}
+{"level":"error","message":"Token Inválido! - /api/sensors - ::1 "}
+{"level":"error","message":"Token Inválido! - /api/sensors - ::1 "}
+{"level":"error","message":"Token Inválido! - /api/login - ::1 "}
+{"level":"error","message":"Token Inválido! - /api/login - ::1 "}
+{"level":"error","message":"Token Inválido! - /api/login - ::1 "}
+{"level":"error","message":"Cannot read properties of undefined (reading 'autService') - /api/login - ::1 "}
+{"level":"error","message":"Cannot read properties of undefined (reading 'autService') - /api/login - ::1 "}
+{"level":"error","message":"Cannot read properties of undefined (reading 'autService') - /api/login - ::1 "}
+{"level":"error","message":"Cannot read properties of undefined (reading 'autService') - /api/login - ::1 "}
+{"level":"error","message":"Credências Inválidas - /api/login - ::1 "}
+{"level":"error","message":"Credências Inválidas - /api/login - ::1 "}
+{"level":"error","message":"Illegal arguments: undefined, string - /api/login - ::1 "}
+{"level":"error","message":"Credências Inválidas - /api/login - ::1 "}
+{"level":"error","message":"null value in column \"tokenhash\" of relation \"refreshtoken\" violates not-null constraint - /api/login - ::1 "}
+{"level":"error","message":"null value in column \"tokenhash\" of relation \"refreshtoken\" violates not-null constraint - /api/login - ::1 "}
+{"level":"error","message":"null value in column \"tokenhash\" of relation \"refreshtoken\" violates not-null constraint - /api/login - ::1 "}
+{"level":"error","message":"Unexpected token '~', \"~,.çlmmkfn\"... is not valid JSON - /api/sensors - ::1 "}
+{"level":"error","message":"Unexpected token '~', \"~,.çlmmkfn\"... is not valid JSON - /api/sensors - ::1 "}
+{"level":"error","message":"Token Inválido! - /api/sensors - ::1 "}
+{"level":"error","message":"Token Inválido! - /api/sensors - ::1 "}
+{"level":"error","message":"Token Inválido! - /api/sensors - ::1 "}

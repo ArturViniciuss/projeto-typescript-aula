@@ -8,27 +8,18 @@ export default class LogoutService {
 
     private repoRefresh = appDataSource.getRepository(RefreshToken);
 
-    async logout(refrestoken: string) {
-
-        try {
-            //
-            const decoded = jwt.verify(refrestoken, jwtConfig.refresh.secret)  as any;
-            await this.repoRefresh.update({ jti: decoded.jti }, { revoked: true })
-
-        } catch (error) {
-            throw new AppError(401, "Token inválido")
+        async logout(sessionId: string) {
+        await this.repoRefresh.update(
+            { sessionId },
+            { revoked: true }
+        );
         }
 
-    }
-
-    async logoutAll(pesquisadorId: string) {
+        async logoutAll(userId: string) {
         await this.repoRefresh.update(
-            {
-                pesquisador: { id: pesquisadorId},
-            },
-            {
-                revoked: true
-            }
-        )
-    }
+            { pesquisador: { id: userId } },
+            { revoked: true }
+        );
+        }
+
 }

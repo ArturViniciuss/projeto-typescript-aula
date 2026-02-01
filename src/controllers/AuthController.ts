@@ -16,17 +16,19 @@ export default class AuthController {
     }
 
     async login(req: Request, res: Response) {
-        const { email, senha } = req.body;
+        const userAgent = req.headers['user-agent'] ?? 'unknown';
+        const ip = req.ip;
+        const { email, senha} = req.body;
 
-        const tokens = this.autService.login(email, senha);
+        const tokens = await this.autService.login(email, senha, userAgent, ip as string);
         res.status(200).json({ tokens })
 
     }
 
     async refreshToken(req: Request, res: Response) {
-        const { refreshToken } = req.body;
+        const { refreshToken, userAgent, ip } = req.body;
 
-        const tokens = await this.refreshService.refresh(refreshToken);
+        const tokens = await this.refreshService.refresh(refreshToken, userAgent, ip);
         res.status(200).json({ tokens })
 
     }
