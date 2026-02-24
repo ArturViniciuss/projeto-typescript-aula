@@ -1,7 +1,5 @@
 name: reservaIoT
 
-# comentários
-
 services:
   api:
     build: .
@@ -11,8 +9,10 @@ services:
     env_file:
       - .env
     depends_on:
-      - postgres
-  
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
   postgres:
     image: postgres:16-alpine
     restart: unless-stopped
@@ -23,11 +23,13 @@ services:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASS}
       - POSTGRES_DB=${DB_NAME}
-
-    # Usando volume
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-# Criando Volume
 volumes:
   postgres-data:
